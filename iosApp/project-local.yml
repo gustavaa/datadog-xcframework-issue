@@ -1,0 +1,32 @@
+name: iosApp
+options:
+  bundleIdPrefix: org.example.project
+packages:
+  DataDog:
+    url: https://github.com/DataDog/dd-sdk-ios
+    from: 2.29.0
+targets:
+  TestApp:
+    type: application
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+     - path: Configuration
+     - path: iosApp
+       excludes:
+         - Info.plist
+    infoPlist: iosApp/Info.plist
+    settings:
+      CODE_SIGNING_REQUIRED: NO
+      CODE_SIGNING_ALLOWED: NO
+    preBuildScripts:
+      - name: Embed And Sign Shared XCFramework
+        script: |
+          #!/bin/bash
+          cd ..
+          ./gradlew :composeApp:embedAndSignAppleFrameworkForXcode
+    dependencies:
+      - package: DataDog
+        products:
+          - DatadogObjc
+          - DatadogCrashReporting
